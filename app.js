@@ -1,37 +1,29 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = express();
-const port = 8080;
 
-
-app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs');
 
 
-let tasks = [];
+const users = {
+    john: { age: 30, hobby: 'Cycling' },
+    jane: { age: 25, hobby: 'Reading' },
+    bob: { age: 35, hobby: 'Hiking' }
+};
 
+app.get('/profile/:username', (req, res) => {
+    const username = req.params.username;
+    const user = users[username];
+    if (user) {
 
-app.get('/todo', (req, res) => {
-    res.render('todo', { tasks: tasks });
-});
+        res.render('profile', { username, user });
+    } else {
 
-
-app.post('/addtask', (req, res) => {
-    const newTask = req.body.task; 
-    if (newTask) {
-        tasks.push(newTask);  
+        res.status(404).send('User not found');
     }
-    res.redirect('/todo');
 });
 
-app.post('/deletetask', (req, res) => {
-    const taskIndex = req.body.taskIndex;  
-    if (taskIndex !== undefined) {
-        tasks.splice(taskIndex, 1);
-    }
-    res.redirect('/todo');  
-});
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
